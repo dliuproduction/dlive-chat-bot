@@ -14,7 +14,9 @@ import { ConfigPage } from '../Config';
 import { rxTimers } from '../../helpers/rxTimers';
 import { TimersPage } from '../Timers';
 import { GiveawaysPage } from '../Giveaways';
+import { SongRequestsPage } from '../SongRequests';
 import { rxGiveaways } from '../../helpers/rxGiveaways';
+import { rxSongRequests } from '../../helpers/rxSongRequests';
 
 const Window: any = window;
 const { ipcRenderer } = Window.require('electron');
@@ -33,6 +35,7 @@ class RouterWrapper extends Component<any, any> {
     giveaways: {},
     timers: {},
     config: {},
+    songRequests: [],
     livestream: { watchingCount: 0 }
   };
   componentDidMount() {
@@ -48,6 +51,10 @@ class RouterWrapper extends Component<any, any> {
     rxGiveaways.subscribe(Giveaways => {
       console.log('GOT GIVEAWAYS', Giveaways);
       this.setState({ giveaways: Giveaways });
+    });
+    rxSongRequests.subscribe(SongRequests => {
+      console.log('GOT SONGS', SongRequests);
+      this.setState({ songRequests: SongRequests });
     });
     ipcRenderer.on('updatedUser', (event, { user }) => {
       let users = Object.assign({}, this.state.users);
@@ -145,6 +152,14 @@ class RouterWrapper extends Component<any, any> {
               closeCurrentPopup: this.closeCurrentPopup
             }}
             Component={TimersPage}
+          />
+          <Route
+            url={url}
+            path={'/songrequests'}
+            componentProps={{
+              songRequests: this.state.songRequests,
+            }}
+            Component={SongRequestsPage}
           />
           <Route
             url={url}

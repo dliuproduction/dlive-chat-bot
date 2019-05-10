@@ -11,11 +11,13 @@
     "dist": "electron-builder --publish=always",
     "electron": "cross-env NODE_ENV=dev electron .",
     "electron-reset": "cross-env NODE_ENV=dev NODE_HARD=true electron .",
-    "release": "build"
+    "release": "build",
+    "webpack": "webpack"
   },
   "author": "CreativeBuilds",
   "license": "ISC",
   "dependencies": {
+    "@u-wave/react-youtube": "^0.6.0",
     "axios": "^0.18.0",
     "dlive-js": "^1.0.12",
     "electron-json-storage": "^4.1.6",

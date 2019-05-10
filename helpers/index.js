@@ -8,5 +8,6 @@ module.exports = {
   wss: require('./webSocketServer').wss,
   tryRequireFromStorage: require('./tryRequireFromStorage'),
   getBlockchainUsername: require('./getBlockchainUsername'),
-  sendLino: require('./sendLino')
+  sendLino: require('./sendLino'),
+  getYoutubeData: require('./getYoutubeData')
 };

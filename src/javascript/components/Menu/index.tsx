@@ -78,6 +78,16 @@ const Menu = props => {
             style={{}}
             hoverStyle={stateTheme.menu.title_hover}
             onClick={() => {
+              setUrl('/songrequests');
+              setIsOpen(false);
+            }}
+          >
+            SONGREQUESTS
+          </Li>
+          <Li
+            style={{}}
+            hoverStyle={stateTheme.menu.title_hover}
+            onClick={() => {
               setUrl('/settings');
               setIsOpen(false);
             }}

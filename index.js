@@ -30,6 +30,7 @@ const rxConfig = require('./helpers/rxConfig');
 rxConfig.subscribe(data => (config = data));
 let Commands = {};
 let Giveaways = {};
+let SongRequests = [];
 const rxUsers = require('./helpers/rxUsers');
 const rxCommands = require('./helpers/rxCommands');
 const rxGiveaways = require('./helpers/rxGiveaways');
@@ -38,6 +39,7 @@ const parseReply = require('./helpers/parseReply');
 rxCommands.subscribe(commands => (Commands = commands));
 const rxTimers = require('./helpers/rxTimers');
 let { makeNewCommand, getBlockchainUsername } = require('./helpers');
+const rxSongRequests = require('./helpers/rxSongRequests');
 const { autoUpdater } = require('electron-updater');
 require('./helpers/startTimers').run();
 
@@ -305,6 +307,20 @@ function createWindow() {
       }
     });
   });
+
+  ipcMain.on('getRxSongRequests', () => {
+    rxSongRequests.subscribe(songRequests => {
+      win.webContents.send('RxSongRequests', songRequests);
+    });
+  });
+
+  ipcMain.on('setRxSongRequests', (event, songRequests) => {
+    if (songRequests !== SongRequests) {
+      SongRequests = songRequests;
+      rxSongRequests.next(songRequests);
+    }
+  });
+
   ipcMain.on('getRxUsers', () => {
     rxUsers.pipe(filter(x => !_.isEmpty(x))).subscribe(Users => {
       let obj = {};
@@ -378,10 +394,19 @@ function createWindow() {
       let command = commands[commandName];
       if (command && !(commandName === 'points' && !!Commands[commandName])) {
         // TODO check permissions
-        command.run({ message, data, args }).then(msg => {
-          if (!msg) return;
-          sendMessage(msg);
-        });
+        if (commandName === 'sr') {
+          command.run({ message, data: SongRequests, args }).then(res => {
+            console.log(res)
+            SongRequests = res.songRequests
+            if (!res.msg) return;
+            sendMessage(res.msg);
+          });
+        } else {
+          command.run({ message, data, args }).then(msg => {
+            if (!msg) return;
+            sendMessage(msg);
+          });
+        }
       } else if (Commands[commandName]) {
         command = Commands[commandName];
         if (!command) return;
